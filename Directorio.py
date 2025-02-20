@@ -1,28 +1,23 @@
 import pandas as pd
+import os
 
 class DirectorioTelefonico:
     def __init__(self):
         pass
 
     @staticmethod
-    def añadir(a, b, c):
-        print("DATOS: ")
-        print("Nombre: ", a)
-        print("Numero: ", b)
-        print("Categoria: ", c)
-        return a, b, c
-
-    @staticmethod
     def guardar(a, b, c):
-        with open("Archivo.txt", "a") as archivo:
-            archivo.write("Datos de: ")
-            archivo.write(a + ", ")
-            archivo.write(b + ", ")
-            archivo.write(c + "\n")
+        archivo_existe = os.path.exists("Archivo.csv")
+        df = pd.DataFrame({"Nombres": [a], "Numero": [b], "Categoria": [c]})
+        if archivo_existe:
+            df.to_csv("Archivo.csv", mode='a', header=False, index=False)
+        else:
+            df.to_csv("Archivo.csv", mode='w', header=True, index=False)
+        print(df)
 
     @staticmethod
     def buscar(a):
-        with open("Archivo.txt", "r") as archivo:
+        with open("Archivo.csv", "r") as archivo:
             lineas = archivo.readlines()
             for linea in lineas:
                 if a in linea:
@@ -30,7 +25,7 @@ class DirectorioTelefonico:
 
     @staticmethod
     def leerpandas():
-        data = pd.read_csv("Archivo.txt", delimiter='[,:]', engine='python')
+        data = pd.read_csv("Archivo.csv", delimiter='[,]', engine='python')
         print(data)
 
     def menu(self):
@@ -45,7 +40,6 @@ class DirectorioTelefonico:
                 nombre = input("Ingrese su nombre: ")
                 numero = input("Ingrese su numero: ")
                 categoria = input("Ingrese su categoria: ")
-                self.añadir(nombre, numero, categoria)
                 self.guardar(nombre, numero, categoria)
             elif seleccion == "2":
                 busqueda = input("Nombre del contacto: ")
