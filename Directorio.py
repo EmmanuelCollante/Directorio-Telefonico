@@ -1,32 +1,35 @@
-import pandas as pd
-import os
+class Contacto:
+    def __init__(self, nombre, numero, categoria):
+        self.nombre = nombre
+        self.numero = numero
+        self.categoria = categoria
+
+    def __str__(self):
+        return f"Nombre: {self.nombre}, Telefono: {self.numero}, Categoria: {self.categoria}"
 
 class DirectorioTelefonico:
     def __init__(self):
-        pass
+        self.contactos = []  # Inicializar la lista de contactos
 
-    @staticmethod
-    def guardar(a, b, c):
-        archivo_existe = os.path.exists("Archivo.csv")
-        df = pd.DataFrame({"Nombres": [a], "Numero": [b], "Categoria": [c]})
-        if archivo_existe:
-            df.to_csv("Archivo.csv", mode='a', header=False, index=False)
+    def guardar(self, a, b, c):
+        nuevo = Contacto(a, b, c)
+        self.contactos.append(nuevo)
+        print(f"Contacto guardado: Nombre: {a}, Telefono: {b}, Categoria: {c}")
+
+    def buscar(self, nombre):
+        for c in self.contactos:
+            if c.nombre.lower() == nombre.lower():
+                print(f"Nombre: {c.nombre}, Telefono: {c.numero}, Categoria: {c.categoria}")
+                return
+        print("Contacto no encontrado.")
+
+    def leerdatos(self):
+        if self.contactos:
+            print("Contactos guardados:")
+            for c in self.contactos:
+                print(c)  # Utiliza el método __str__ para imprimir el objeto
         else:
-            df.to_csv("Archivo.csv", mode='w', header=True, index=False)
-        print(df)
-
-    @staticmethod
-    def buscar(a):
-        with open("Archivo.csv", "r") as archivo:
-            lineas = archivo.readlines()
-            for linea in lineas:
-                if a in linea:
-                    print("Encontrado:", linea)
-
-    @staticmethod
-    def leerpandas():
-        data = pd.read_csv("Archivo.csv", delimiter='[,]', engine='python')
-        print(data)
+            print("No hay contactos guardados.")
 
     def menu(self):
         while True:
@@ -37,19 +40,20 @@ class DirectorioTelefonico:
             print("4. Cancelar")
             seleccion = input("Selecciona una opcion: ")
             if seleccion == "1":
-                nombre = input("Ingrese su nombre: ")
+                nombre = input("Ingrese su nombre: ").lower()
                 numero = input("Ingrese su numero: ")
-                categoria = input("Ingrese su categoria: ")
+                categoria = input("Ingrese su categoria: ").lower()
                 self.guardar(nombre, numero, categoria)
             elif seleccion == "2":
-                busqueda = input("Nombre del contacto: ")
+                busqueda = input("Nombre del contacto: ").lower()
                 self.buscar(busqueda)
             elif seleccion == "3":
-                self.leerpandas()
+                self.leerdatos()
             elif seleccion == "4":
                 break
             else:
                 print("Opcion no valida")
 
+# Crear una instancia de DirectorioTelefonico
 directorio = DirectorioTelefonico()
 directorio.menu()
