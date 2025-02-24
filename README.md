@@ -1,1 +1,1 @@
-Hola, esta es la segunda version de mi primer proyecto en Python, lo que añadi en esta ocasion fue la libreria "Pandas", y la funcion de revisar todos los datos registrados
+Hola, ahora el script funciona con Poo (Programacion orientada a objetos)
