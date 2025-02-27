@@ -2,52 +2,38 @@ import pandas as pd
 from sqlalchemy import create_engine
 engine = create_engine("sqlite:///Datos")
 
-class DirectorioTelefonico:
-    def _init_(self):
-        pass
+class Contacto:
+    def __init__(self, nombre, numero, categoria):
+        self.nombre = nombre
+        self.numero = numero
+        self.categoria = categoria
 
-    @staticmethod
-    def guardar(a, b, c):
+    def __str__(self):
+        return f"Nombre: {self.nombre}, Telefono: {self.numero}, Categoria: {self.categoria}"
+
+class DirectorioTelefonico:
+    def __init__(self):
+        self.contactos = []  # Inicializar la lista de contactos
+
+    def guardar(self, a, b, c):
         df = pd.DataFrame({"Nombres": [a], "Numero": [b], "Categoria": [c]})
         df.to_sql("DatosTelefonicos", con=engine, if_exists='append', index=False)
+        nuevo = Contacto(a, b, c)
+        self.contactos.append(nuevo)
+        print(f"Contacto guardado: Nombre: {a}, Telefono: {b}, Categoria: {c}")
         print(df)
 
-    @staticmethod
-    def buscar(a):
-        query = f"SELECT * FROM DatosTelefonicos WHERE Nombres = '{a}'"
+    def buscar(self, nombre):
+        # Buscar en la base de datos
+        query = f"SELECT * FROM DatosTelefonicos WHERE Nombres = '{nombre}'"
         resultado = pd.read_sql(query, con=engine)
         if not resultado.empty:
             print(resultado)
         else:
-            print("No se encontró ningún resultado.")
+            # Buscar en la lista de contactos
+            for c in self.contactos:
+                if c.nombre.lower() == nombre.lower():
+                    print(f"Nombre: {c.nombre}, Telefono: {c.numero}, Categoria: {c.categoria}")
+                    return
+            print("Contacto no encontrado.")
 
-    @staticmethod
-    def leerpandas():
-        df = pd.read_sql("SELECT * FROM DatosTelefonicos", con=engine)
-        print(df)
-
-    def menu(self):
-        while True:
-            print("Selecciona una opcion")
-            print("1. Añadir")
-            print("2. Buscar")
-            print("3. Datos")
-            print("4. Cancelar")
-            seleccion = input("Selecciona una opcion: ")
-            if seleccion == "1":
-                nombre = input("Ingrese su nombre: ").lower()
-                numero = input("Ingrese su numero: ")
-                categoria = input("Ingrese su categoria: ").upper()
-                self.guardar(nombre, numero, categoria)
-            elif seleccion == "2":
-                busqueda = input("Nombre del contacto: ")
-                self.buscar(busqueda)
-            elif seleccion == "3":
-                self.leerpandas()
-            elif seleccion == "4":
-                break
-            else:
-                print("Opcion no valida")
-
-directorio = DirectorioTelefonico()
-directorio.menu()
